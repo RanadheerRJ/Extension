@@ -1,0 +1,87 @@
+#tv-tracker-panel {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 240px; /* Slimmer width */
+    background: #ffffff;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    border-radius: 10px 0 0 10px;
+    z-index: 2147483647;
+    font-family: 'Inter', -apple-system, sans-serif;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+/* SLEEK COLLAPSED TAB */
+#tv-tracker-panel.collapsed {
+    width: 32px;
+    height: 100px;
+    background: #003366;
+    cursor: pointer;
+}
+
+#tv-tracker-header {
+    background: #003366;
+    color: white;
+    padding: 6px 12px; /* Very tight padding */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px 0 0 0;
+}
+
+#tv-tracker-header span {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+#tv-collapse-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+}
+
+/* BUTTON STYLES */
+.tv-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 10px; /* Reduced padding */
+    margin-bottom: 4px; /* Tighter spacing */
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.tv-btn:hover {
+    background: #f0f4f8;
+    border-color: #003366;
+    color: #003366;
+}
+
+#tv-tracker-panel.collapsed::after {
+    content: "TRACKER";
+    color: white;
+    writing-mode: vertical-rl;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px;
+    font-weight: bold;
+}
+
+#tv-tracker-panel.collapsed #tv-tracker-content,
+#tv-tracker-panel.collapsed #tv-tracker-header {
+    display: none;
+}

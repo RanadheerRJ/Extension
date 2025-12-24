@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "ThomasVallen Case Tracker",
+  "version": "1.1",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "https://*.github.dev/*",
+    "https://cms.thomasvallen.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://cms.thomasvallen.com/petition-details/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
