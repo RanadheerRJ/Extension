@@ -24,7 +24,7 @@ function createPanel() {
     panel.classList.add("collapsed"); // Start sleek and collapsed
     panel.innerHTML = `
         <div id="tv-tracker-header">
-            <span style="font-size: 13px; letter-spacing: 0.5px;">FILE TRACKER</span>
+            <span style="font-size: 13px; letter-spacing: 0.5px;">🦅 FILE TRACKER</span>
             <button id="tv-collapse-btn">×</button>
         </div>
         <div id="tv-tracker-content"></div>

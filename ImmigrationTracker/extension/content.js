@@ -26,7 +26,7 @@ function createPanel() {
     panel.classList.add("collapsed"); 
     panel.innerHTML = `
         <div id="tv-tracker-header">
-            <span>FILE TRACKER</span>
+            <span>🦅FILE TRACKER</span>
             <button id="tv-collapse-btn">×</button>
         </div>
         <div id="tv-tracker-content"></div>
