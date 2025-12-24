@@ -1,75 +1,103 @@
+/* Tesla Minimalist Side Drawer */
 #tv-tracker-panel {
     position: fixed;
-    top: 80px;
-    right: 20px;
-    width: 260px;
-    background: white;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    border-radius: 12px;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 300px;
+    background: #ffffff;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05);
     z-index: 2147483647;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    border: 1px solid #d1d1d1;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #eee;
 }
 
+/* When collapsed, slide completely off-screen */
 #tv-tracker-panel.collapsed {
-    width: 50px;
-    height: 50px;
-    border-radius: 25px;
-    cursor: pointer;
-    background: #003366;
+    transform: translateX(100%);
 }
 
 #tv-tracker-header {
-    background: #003366;
-    color: white;
-    padding: 10px 14px;
-    font-weight: 600;
+    padding: 40px 24px 20px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+#tv-tracker-header span {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #171a20;
+}
+
 #tv-collapse-btn {
     background: none;
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
+    border: none;
+    font-size: 24px;
     cursor: pointer;
-    border-radius: 4px;
+    color: #171a20;
+    padding: 5px;
     line-height: 1;
-    padding: 2px 6px;
+}
+
+/* Persistent Trigger Tab */
+#tv-tracker-trigger {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: #171a20;
+    color: white;
+    padding: 20px 6px;
+    border-radius: 10px 0 0 10px;
+    cursor: pointer;
+    writing-mode: vertical-rl;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 2147483646;
+    transition: padding 0.2s;
+}
+
+#tv-tracker-trigger:hover {
+    padding-right: 12px;
+}
+
+/* Hide trigger when panel is open */
+#tv-tracker-panel:not(.collapsed) ~ #tv-tracker-trigger {
+    display: none;
+}
+
+/* Tesla-style Pill Buttons */
+.tv-btn-group {
+    padding: 0 24px;
 }
 
 .tv-btn {
     display: block;
     width: 100%;
-    text-align: left;
-    padding: 8px 10px;
-    margin-bottom: 5px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    cursor: pointer;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: #f4f4f4;
+    border: none;
+    border-radius: 25px; /* High-rounded pill shape */
     font-size: 12px;
-    transition: all 0.2s;
+    font-weight: 500;
+    color: #171a20;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
 }
 
 .tv-btn:hover {
-    background: #eef2f7;
-    border-color: #003366;
+    background: #e2e2e2;
 }
 
-#tv-tracker-panel.collapsed #tv-tracker-content,
-#tv-tracker-panel.collapsed #tv-tracker-header span {
-    display: none;
-}
-
-#tv-tracker-panel.collapsed::after {
-    content: "📁";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 20px;
+.tv-btn.active-loc {
+    background: #3d69e1;
+    color: white;
 }

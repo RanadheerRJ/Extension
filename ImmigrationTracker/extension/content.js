@@ -1,24 +1,16 @@
-// REMOVE the trailing slash from your URL
-const API_BASE = "https://glowing-chainsaw-746j76g94pxhp5qj-5050.app.github.dev"; 
+// Update the API base URL to match your actual API endpoint 
+const API_BASE = "https://glowing-chainsaw-746j76g94pxhp5qj-5050.app.github.dev/"; 
 
 function extractCaseNumber() {
-    // 1. Regex search for NJ-JJ-XXXXXX pattern
-    const bodyText = document.body.innerText;
-    const casePattern = /[A-Z]{2}-[A-Z]{2}-\d{5,}/; 
-    const match = bodyText.match(casePattern);
-    if (match) return match[0];
-
-    // 2. Targeted search for "Case No" labels
-    const elements = document.querySelectorAll('div, span, td, b, strong');
-    for (let el of elements) {
-        if (el.innerText.includes("Case No")) {
-            // Try to get text immediately after "Case No"
-            let text = el.innerText.split(/Case No:?|Case No\.?/i)[1]?.trim();
-            // If empty, check the next element in the DOM
-            if (!text || text.length < 5) {
-                text = el.nextElementSibling?.innerText.trim();
-            }
-            if (text && text.length > 5 && text.length < 25) return text;
+    const labels = document.querySelectorAll('div, span, label');
+    for (let el of labels) {
+        if (el.innerText.trim() === "Case No") {
+            const rawText = el.parentElement.innerText
+                .replace("Case No", "")
+                .replace("arrow_drop_down", "")
+                .replace(/©.*/s, "")
+                .trim();
+            return rawText.split('\n')[0].trim();
         }
     }
     return null;
@@ -28,32 +20,29 @@ function createPanel() {
     let panel = document.getElementById("tv-tracker-panel");
     if (panel) return panel;
 
+    // Create Main Panel
     panel = document.createElement("div");
     panel.id = "tv-tracker-panel";
+    panel.classList.add("collapsed"); 
     panel.innerHTML = `
         <div id="tv-tracker-header">
-            <span>File Tracker</span>
-            <button id="tv-collapse-btn">−</button>
+            <span>FILE TRACKER</span>
+            <button id="tv-collapse-btn">×</button>
         </div>
-        <div id="tv-tracker-content">
-            <div style="padding:20px; text-align:center; font-size:12px;">🔍 Detecting Case...</div>
-        </div>
+        <div id="tv-tracker-content"></div>
     `;
     document.body.appendChild(panel);
 
-    const collapseBtn = panel.querySelector("#tv-collapse-btn");
-    collapseBtn.onclick = (e) => {
-        e.stopPropagation();
-        panel.classList.toggle("collapsed");
-        collapseBtn.textContent = panel.classList.contains("collapsed") ? "+" : "−";
-    };
+    // Create Trigger Tab (The "Tesla" handle)
+    const trigger = document.createElement("div");
+    trigger.id = "tv-tracker-trigger";
+    trigger.innerText = "TRACKER";
+    document.body.appendChild(trigger);
 
-    panel.onclick = () => {
-        if (panel.classList.contains("collapsed")) {
-            panel.classList.remove("collapsed");
-            collapseBtn.textContent = "−";
-        }
-    };
+    // Event Listeners
+    trigger.onclick = () => panel.classList.remove("collapsed");
+    panel.querySelector("#tv-collapse-btn").onclick = () => panel.classList.add("collapsed");
+
     return panel;
 }
 
@@ -61,28 +50,33 @@ async function renderData(data) {
     const contentDiv = document.querySelector("#tv-tracker-content");
     if (!contentDiv || !data) return;
 
-    const dateStr = new Date(data.lastUpdated).toLocaleString();
+    const locations = [
+        { id: "Dock Station", label: "📥 Dock Station" },
+        { id: "Paralegal Desk", label: "💻 Paralegal Desk" },
+        { id: "Attorney Review", label: "⚖️ Attorney Review" },
+        { id: "Supervisor Desk", label: "👔 Supervisor Desk" },
+        { id: "Ready for Signature", label: "✍️ Ready" }
+    ];
 
     contentDiv.innerHTML = `
-        <div style="padding: 12px;">
-            <div style="margin-bottom:10px;">
-                <label style="font-size:10px; color: #666; font-weight:bold; display:block; text-transform:uppercase;">Case Number</label>
-                <div style="font-weight:bold; font-size:15px; color:#003366;">${data.caseId}</div>
-            </div>
-            
-            <div style="margin-bottom:10px; background:#f0f7ff; padding:8px; border-radius:4px; border-left:4px solid #003366;">
-                <label style="font-size:10px; color: #666; font-weight:bold; display:block;">CURRENT LOCATION</label>
-                <div style="font-weight:bold; color:#c62828; font-size:13px;">📍 ${data.currentLocation}</div>
+        <div style="padding: 0 24px 24px 24px;">
+            <div style="margin-bottom: 30px;">
+                <p style="font-size: 11px; color: #5c5e62; margin-bottom: 4px;">CASE ID</p>
+                <p style="font-size: 18px; font-weight: 500; color: #171a20; margin: 0;">${data.caseId}</p>
             </div>
 
-            <div style="font-size:11px; color:#888; margin-bottom:10px;">Last Sync: ${dateStr}</div>
+            <div style="margin-bottom: 30px; padding: 16px; background: #f9f9f9; border-radius: 12px;">
+                <p style="font-size: 11px; color: #5c5e62; margin-bottom: 4px;">CURRENT LOCATION</p>
+                <p style="font-size: 14px; font-weight: 600; color: #3d69e1; margin: 0;">${data.currentLocation}</p>
+            </div>
 
-            <div style="border-top: 1px solid #eee; padding-top:10px;">
-                <button class="tv-btn" data-status="Dock Station">📥 Dock Station</button>
-                <button class="tv-btn" data-status="Paralegal Desk">💻 Paralegal Desk</button>
-                <button class="tv-btn" data-status="Attorney Review">⚖️ Attorney Review</button>
-                <button class="tv-btn" data-status="Supervisor Desk">👔 Supervisor Desk</button>
-                <button class="tv-btn" data-status="Ready for Signature">✍️ Ready</button>
+            <p style="font-size: 11px; color: #5c5e62; margin-bottom: 15px; font-weight: 600;">CHANGE STATUS</p>
+            <div class="tv-btn-group" style="padding: 0;">
+                ${locations.map(loc => `
+                    <button class="tv-btn ${data.currentLocation === loc.id ? 'active-loc' : ''}" data-status="${loc.id}">
+                        ${loc.label}
+                    </button>
+                `).join('')}
             </div>
         </div>
     `;
@@ -90,7 +84,7 @@ async function renderData(data) {
     contentDiv.querySelectorAll(".tv-btn").forEach(btn => {
         btn.onclick = async () => {
             const status = btn.getAttribute("data-status");
-            btn.innerText = "Saving...";
+            btn.innerText = "Updating...";
             const updated = await updateStatus(data.caseId, status);
             if (updated) renderData(updated);
         };
@@ -102,18 +96,16 @@ async function runTracker() {
     const panel = createPanel();
 
     if (!caseId) {
-        // If we are on a different page, hide the panel
         if (!window.location.href.includes("petition-details")) {
             panel.style.display = "none";
         }
         return;
     }
 
-    panel.style.display = "block";
+    panel.style.display = "flex";
     
     if (panel.getAttribute("data-current-case") !== caseId) {
         panel.setAttribute("data-current-case", caseId);
-        document.querySelector("#tv-tracker-content").innerHTML = '<div style="padding:20px; text-align:center;">🔄 Loading...</div>';
         const data = await fetchCaseStatus(caseId);
         if (data) renderData(data);
     }
@@ -123,10 +115,7 @@ async function fetchCaseStatus(id) {
     try { 
         const r = await fetch(`${API_BASE}/case/${encodeURIComponent(id)}`); 
         return await r.json(); 
-    } catch(e) { 
-        document.querySelector("#tv-tracker-content").innerHTML = '<div style="color:red; padding:10px;">Offline: Check Codespace Port</div>';
-        return null; 
-    } 
+    } catch(e) { return null; } 
 }
 
 async function updateStatus(id, status) {
@@ -139,5 +128,5 @@ async function updateStatus(id, status) {
     } catch(e) { return null; }
 }
 
-setInterval(runTracker, 2500);
+setInterval(runTracker, 2000);
 runTracker();
